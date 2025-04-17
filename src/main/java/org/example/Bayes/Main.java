@@ -20,8 +20,8 @@ public class Main {
 
         Set<String> classSet = new HashSet<>();
 
-        for (String[] record : trainDataset) {
-            classSet.add(record[record.length - 1]);
+        for (String[] row : trainDataset) {
+            classSet.add(row[row.length - 1]);
         }
 
         List<String> classes = new ArrayList<>(classSet);
@@ -37,9 +37,9 @@ public class Main {
         List<Integer> realList = new ArrayList<>();
         List<Integer> predictedList = new ArrayList<>();
 
-        for (String[] record : testDataset) {
-            String actual = record[record.length - 1];
-            String pred = classifier.predict(record);
+        for (String[] row : testDataset) {
+            String actual = row[row.length - 1];
+            String pred = classifier.predict(row);
 
             int actualI = classIndex.get(actual);
             int predictedI = classIndex.get(pred);

@@ -8,6 +8,7 @@ public class NaiveBayesClassifier {
 
     private final Map<String, Double> classPriors        = new HashMap<>();
     private final Map<String, List<Map<String, Double>>> classPosteriors = new HashMap<>();
+
     private final Map<String, Integer> classCounts        = new HashMap<>();
     private final Map<Integer, Integer> attributeValueSizes = new HashMap<>();
 
@@ -22,26 +23,26 @@ public class NaiveBayesClassifier {
         Map<Integer, Set<String>> attributeValues = new HashMap<>();
         Map<String, Map<Integer, Map<String, Integer>>> conditionalCounts = new HashMap<>();
 
-        for (String[] record : trainDataset) {
-            String clazz = record[record.length - 1];
+        for (String[] row : trainDataset) {
+            String clazz = row[row.length - 1];
             classCounts.put(clazz, classCounts.getOrDefault(clazz, 0) + 1);
             conditionalCounts.putIfAbsent(clazz, new HashMap<>());
 
-            for (int i = 0; i < record.length - 1; i++) {
-                attributeValues.computeIfAbsent(i, _ -> new HashSet<>()).add(record[i]);
+            for (int i = 0; i < row.length - 1; i++) {
+                attributeValues.computeIfAbsent(i, _ -> new HashSet<>()).add(row[i]);
 
                 var byAttr = conditionalCounts.get(clazz);
                 byAttr.computeIfAbsent(i, _ -> new HashMap<>())
-                        .merge(record[i], 1, Integer::sum);
+                        .merge(row[i], 1, Integer::sum);
             }
         }
 
-        // 2) Priors: P(class)
+        // "a priori" probabilities: P(class)
         for (var e : classCounts.entrySet()) {
             classPriors.put(e.getKey(), (double)e.getValue() / total);
         }
 
-        // 3) Posterior probabilities: P(attribute=value | class)
+        // "a posteriori" probabilities: P(attribute=value | class)
         for (String clazz : classCounts.keySet()) {
             int classCount = classCounts.get(clazz);
             List<Map<String, Double>> attributeList = new ArrayList<>();
@@ -96,6 +97,7 @@ public class NaiveBayesClassifier {
                 bestClass = clazz;
             }
         }
+
         return bestClass;
     }
 }
