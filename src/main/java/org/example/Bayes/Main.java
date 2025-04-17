@@ -1,13 +1,17 @@
 package org.example.Bayes;
 
+import java.util.*;
+
 public class Main {
-
     public static void main(String[] args) {
-        System.out.println(smooth(0, 4, 5));
-        System.out.println(smooth(0, 6, 7));
-    }
+        List<String[]> dataset = PrepareDataset.prepareDataset("src/main/resources/outGame.csv");
 
-    public static double smooth(int numerator, int denominator, int numberOfAttributes){
-        return (double) (numerator + 1) / (denominator + numberOfAttributes);
+        if (dataset == null) {
+            return;
+        }
+
+        Collections.shuffle(dataset);
+        List<String[]> testDataset = new ArrayList<>(dataset.subList(0, 2));
+        List<String[]> trainDataset = new ArrayList<>(dataset.subList(2, dataset.size()));
     }
 }
