@@ -51,7 +51,7 @@ public class Main {
         }
 
         double accuracy = EvaluationMetrics.measureAccuracy(realList, predictedList);
-        System.out.println("Accuracy: " +  accuracy * 100 + "%");
+        System.out.println("Accuracy: " + accuracy * 100 + "%");
 
         for (int i = 0; i < n; i++) {
             double precision = EvaluationMetrics.precision(confusionMatrix, i);

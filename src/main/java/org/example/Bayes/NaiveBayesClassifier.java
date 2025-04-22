@@ -6,10 +6,10 @@ public class NaiveBayesClassifier {
     private final boolean applySmoothingAll;
     private final List<String[]> trainDataset;
 
-    private final Map<String, Double> classPriors        = new HashMap<>();
+    private final Map<String, Double> classPriors = new HashMap<>();
     private final Map<String, List<Map<String, Double>>> classPosteriors = new HashMap<>();
 
-    private final Map<String, Integer> classCounts        = new HashMap<>();
+    private final Map<String, Integer> classCounts = new HashMap<>();
     private final Map<Integer, Integer> attributeValueSizes = new HashMap<>();
 
     public NaiveBayesClassifier(boolean applySmoothingAll, List<String[]> trainDataset) {
@@ -39,7 +39,7 @@ public class NaiveBayesClassifier {
 
         // "a priori" probabilities: P(class)
         for (var e : classCounts.entrySet()) {
-            classPriors.put(e.getKey(), (double)e.getValue() / total);
+            classPriors.put(e.getKey(), (double) e.getValue() / total);
         }
 
         // "a posteriori" probabilities: P(attribute=value | class)
@@ -62,7 +62,7 @@ public class NaiveBayesClassifier {
                     if (applySmoothingAll || count == 0) {
                         probability = smooth(count, classCount, numberOfValues);
                     } else {
-                        probability = (double)count / classCount;
+                        probability = (double) count / classCount;
                     }
 
                     valueProbability.put(value, probability);
@@ -75,7 +75,7 @@ public class NaiveBayesClassifier {
     }
 
     public double smooth(int numerator, int denominator, int numberOfValues) {
-        return (double)(numerator + 1) / (denominator + numberOfValues);
+        return (double) (numerator + 1) / (denominator + numberOfValues);
     }
 
     public String predict(String[] input) {
