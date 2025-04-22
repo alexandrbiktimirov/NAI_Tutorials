@@ -33,7 +33,7 @@ public class Main {
         }
 
         int n = classes.size();
-        int[][] confusion = new int[n][n];
+        int[][] confusionMatrix = new int[n][n];
         List<Integer> realList = new ArrayList<>();
         List<Integer> predictedList = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public class Main {
             int actualI = classIndex.get(actual);
             int predictedI = classIndex.get(pred);
 
-            confusion[actualI][predictedI]++;
+            confusionMatrix[actualI][predictedI]++;
 
             realList.add(actualI);
             predictedList.add(predictedI);
@@ -54,9 +54,9 @@ public class Main {
         System.out.println("Accuracy: " +  accuracy * 100 + "%");
 
         for (int i = 0; i < n; i++) {
-            double precision = EvaluationMetrics.precision(confusion, i);
-            double recall = EvaluationMetrics.recall(confusion, i);
-            double fMeasure = EvaluationMetrics.fMeasure(confusion, i);
+            double precision = EvaluationMetrics.precision(confusionMatrix, i);
+            double recall = EvaluationMetrics.recall(confusionMatrix, i);
+            double fMeasure = EvaluationMetrics.fMeasure(confusionMatrix, i);
 
             System.out.println("Class: " + classes.get(i));
             System.out.printf("Precision: %.2f%n", precision);
