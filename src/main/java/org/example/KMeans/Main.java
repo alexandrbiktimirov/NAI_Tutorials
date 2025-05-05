@@ -1,56 +1,34 @@
 package org.example.KMeans;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Main {
-    public static int findClosestCluster(double[] vector, double[][] centroids) {
-        double[] distances = new double[centroids.length];
-
-        double minimalDistance = Double.POSITIVE_INFINITY;
-        List<Integer> minimalIndices = new ArrayList<>();
-
-        for (int i = 0; i < centroids.length; i++) {
-            distances[i] = calculateEuclideanDistance(vector, centroids[i]);
-
-            if (distances[i] < minimalDistance) {
-                minimalDistance = distances[i];
-                minimalIndices.clear();
-                minimalIndices.add(i);
-            } else if (distances[i] == minimalDistance) {
-                minimalIndices.add(i);
-            }
-        }
-
-        Random random = new Random();
-        return minimalIndices.get(random.nextInt(minimalIndices.size()));
-    }
-
-
-    public static double calculateEuclideanDistance(double[] a, double[] b) {
-        double sum = 0;
-
-        for (int i = 0; i < a.length; i++) {
-            double difference = a[i] - b[i];
-            sum += Math.pow(difference, 2);
-        }
-
-        return Math.sqrt(sum);
-    }
-
     public static void main(String[] args) {
-        double[][] centroids = {
-                {0.0, 0.0},
-                {5.0, 5.0},
-                {5.0, 5.0},
-                {10.0, 0.0}
-        };
+        List<String[]> dataset = PrepareDataset.prepareDataset("src/main/resources/iris.csv");
 
-        double[] a = {6.0, 4.5};
+        if(dataset == null){
+            System.out.println("No dataset found");
+            return;
+        }
 
+        List<double[]> clusters = new ArrayList<>();
 
+        for(String[] row : dataset) {
+            double[] cluster = new double[row.length - 1];
 
-        System.out.println(findClosestCluster(a, centroids));
+            for(int i = 0; i < row.length - 1; i++) {
+                cluster[i] = Double.parseDouble(row[i]);
+            }
+
+            clusters.add(cluster);
+        }
+
+        var kMeans = new KMeans(3, clusters);
+
+        SwingUtilities.invokeLater(() -> {
+            Plot.plotClusters(clusters, kMeans.getClusterAndCentroid(), kMeans.getCentroids());
+        });
     }
 }
