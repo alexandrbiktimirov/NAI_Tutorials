@@ -41,19 +41,19 @@ public class Plot {
                 XYSeriesCollection centroidDs = new XYSeriesCollection();
 
                 for (int c = 0; c < k; c++) {
-                    XYSeries pts = new XYSeries("Cluster " + c);
+                    XYSeries observations = new XYSeries("Cluster " + c);
 
-                    for (double[] p : clusters) {
-                        if (clusterAndCentroid.get(p) == c) {
-                            pts.add(p[i], p[j]);
+                    for (double[] observation : clusters) {
+                        if (clusterAndCentroid.get(observation) == c) {
+                            observations.add(observation[i], observation[j]);
                         }
                     }
 
-                    clusterDs.addSeries(pts);
+                    clusterDs.addSeries(observations);
 
-                    XYSeries ctr = new XYSeries("Centroid " + c);
-                    ctr.add(centroids[c][i], centroids[c][j]);
-                    centroidDs.addSeries(ctr);
+                    XYSeries centroid = new XYSeries("Centroid " + c);
+                    centroid.add(centroids[c][i], centroids[c][j]);
+                    centroidDs.addSeries(centroid);
                 }
 
                 JFreeChart chart = ChartFactory.createScatterPlot(

@@ -35,32 +35,32 @@ public class KMeans {
 
     private void computeCentroids() {
         int dimensions = clusters.getFirst().length;
-        int[] counts = new int[k];
+        int[] observationsToCentroid = new int[k];
 
         for (int i = 0; i < k; i++) {
             for (int j = 0; j < dimensions; j++) {
                 centroids[i][j] = 0.0;
             }
 
-            counts[i] = 0;
+            observationsToCentroid[i] = 0;
         }
 
         for (var entry : clusterAndCentroid.entrySet()) {
-            double[] point = entry.getKey();
-            int clusterIndex = entry.getValue();
+            double[] observation = entry.getKey();
+            int centroidIndex = entry.getValue();
 
-            for (int d = 0; d < dimensions; d++) {
-                centroids[clusterIndex][d] += point[d];
+            for (int i = 0; i < dimensions; i++) {
+                centroids[centroidIndex][i] += observation[i];
             }
 
-            counts[clusterIndex]++;
+            observationsToCentroid[centroidIndex]++;
         }
 
         for (int i = 0; i < k; i++) {
-            if (counts[i] == 0) continue;
+            if (observationsToCentroid[i] == 0) continue;
 
             for (int d = 0; d < dimensions; d++) {
-                centroids[i][d] /= counts[i];
+                centroids[i][d] /= observationsToCentroid[i];
             }
         }
     }
@@ -75,7 +75,7 @@ public class KMeans {
                 previousCentroids[i] = centroids[i].clone();
             }
 
-            System.out.println("Epoch #" + epoch);
+            System.out.println("Epoch #" + ++epoch);
 
             for (double[] cluster : clusters) {
                 clusterAndCentroid.put(cluster, findClosestCentroid(cluster, centroids));
@@ -85,7 +85,7 @@ public class KMeans {
 
             if (Arrays.deepEquals(previousCentroids, centroids)) {
                 newCentroidsChange = false;
-
+                int finalWcss = 0;
 
                 for (int i = 0; i < k; i++) {
                     List<double[]> clusters = new ArrayList<>();
@@ -96,11 +96,13 @@ public class KMeans {
                         }
                     }
 
-                    System.out.println("Within Cluster Sum of Squares for centroid #" + i + " " + Arrays.toString(centroids[i]) + " " + " is: " + EvaluationMetrics.wcss(clusters, centroids[i]));
+                    double result = EvaluationMetrics.wcss(clusters, centroids[i]);
+                    finalWcss += (int) result;
+                    System.out.println("Within Cluster Sum of Squares for centroid #" + i + " " + Arrays.toString(centroids[i]) + " " + " is: " + result);
                     clusters.clear();
                 }
+                System.out.println("Final Within Cluster Sum of Squares is: " + finalWcss);
             }
-            epoch++;
         }
     }
 

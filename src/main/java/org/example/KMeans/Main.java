@@ -27,8 +27,6 @@ public class Main {
 
         var kMeans = new KMeans(3, clusters);
 
-        SwingUtilities.invokeLater(() -> {
-            Plot.plotClusters(clusters, kMeans.getClusterAndCentroid(), kMeans.getCentroids());
-        });
+        SwingUtilities.invokeLater(() -> Plot.plotClusters(clusters, kMeans.getClusterAndCentroid(), kMeans.getCentroids()));
     }
 }
