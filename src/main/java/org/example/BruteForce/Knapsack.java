@@ -1,13 +1,11 @@
 package org.example.BruteForce;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 public class Knapsack {
-    private int[] itemWeights;
-    private int[] itemValues;
+    private final int[] itemWeights;
+    private final int[] itemValues;
     private final int capacity;
 
     public Knapsack(int[] itemWeights, int[] itemValues, int capacity, String type) {
@@ -15,16 +13,17 @@ public class Knapsack {
         this.itemValues = itemValues;
         this.capacity = capacity;
 
-        long startTime = System.nanoTime();
-        long endTime;
         System.out.println("-------------------------------------------------------");
+
+        long startTime = System.nanoTime();
+
         if (type.equalsIgnoreCase("brute force")) {
             bruteForce();
-            endTime = System.nanoTime();
         } else {
             greedyDensityApproach();
-            endTime = System.nanoTime();
         }
+
+        long endTime = System.nanoTime();
         double duration = endTime - startTime;
 
         System.out.println("Time taken: " + duration / 1_000_000_000 + "s");
@@ -55,13 +54,12 @@ public class Knapsack {
         System.out.println("-------------------------------------------------------\n");
     }
 
-    public int[][] bruteForce() {
+    public void bruteForce() {
         int n = itemValues.length;
         int totalSubsets = 1 << n;
-        int bestValue = 0;
+        int bestObjectiveFunction = 0;
         int bestFeasibility = 0;
-
-        List<int[]> solutions = new ArrayList<>();
+        int[] bestSolution = new int[n];
 
         for (int mask = 0; mask < totalSubsets; mask++) {
             int feasibility = 0;
@@ -74,34 +72,29 @@ public class Knapsack {
                 }
             }
 
-            if (feasibility <= capacity) {
-                if (objectiveFunction > bestValue) {
-                    bestValue = objectiveFunction;
-                    bestFeasibility = feasibility;
-                    solutions.clear();
-                    solutions.add(toBinaryArray(mask, n));
-                } else if (objectiveFunction == bestValue) {
-                    solutions.add(toBinaryArray(mask, n));
-                }
+            if (feasibility <= capacity && objectiveFunction > bestObjectiveFunction) {
+                bestObjectiveFunction = objectiveFunction;
+                bestFeasibility = feasibility;
+                bestSolution = toBinaryArray(mask, n);
             }
         }
 
-        System.out.println("Brute‐force: best total value = " + bestValue);
-        System.out.println("Feasibility: " + bestFeasibility);
-        System.out.println("Optimal selections (as 0/1 vectors):");
-        for (int[] vec : solutions) {
-            System.out.println(Arrays.toString(vec));
+        System.out.println("Brute‐force: best objective function = " + bestObjectiveFunction);
+        System.out.println("Feasibility: " + bestFeasibility + " <= " + capacity);
+
+        printItems(n, bestSolution);
+    }
+
+    private void printItems(int n, int[] vec) {
+        System.out.print("Selected item weights: ");
+        for (int i = 0; i < n; i++) {
+            if (vec[i] == 1) System.out.print(itemWeights[i] + " ");
         }
-
-
-
-        int[][] result = new int[solutions.size()][n];
-
-        for (int i = 0; i < solutions.size(); i++) {
-            result[i] = solutions.get(i);
+        System.out.print("\nSelected item values:  ");
+        for (int i = 0; i < n; i++) {
+            if (vec[i] == 1) System.out.print(itemValues[i] + " ");
         }
-
-        return result;
+        System.out.println();
     }
 
     private int[] toBinaryArray(int mask, int n) {
@@ -115,45 +108,35 @@ public class Knapsack {
     }
 
 
-    public int[][] greedyDensityApproach() {
+    public void greedyDensityApproach() {
         int n = itemValues.length;
 
-        Integer[] idx = new Integer[n];
+        Integer[] indices = new Integer[n];
         for (int i = 0; i < n; i++) {
-            idx[i] = i;
+            indices[i] = i;
         }
 
-        Arrays.sort(idx, Comparator.comparingDouble(
-                i -> -((double) itemValues[i] / itemWeights[i])
+        Arrays.sort(indices, Comparator.comparingDouble(
+            i -> -((double) itemValues[i] / itemWeights[i])
         ));
 
-        int remaining = capacity;
-        int feasibility = 0, objectiveFunction = 0;
-        int[] selection = new int[n];
+        int remainingWeight = capacity;
+        int feasibility = 0;
+        int objectiveFunction = 0;
+        int[] binaryArray = new int[n];
 
-        for (int i : idx) {
-            if (itemWeights[i] <= remaining) {
-                remaining -= itemWeights[i];
+        for (int i : indices) {
+            if (itemWeights[i] <= remainingWeight) {
+                remainingWeight -= itemWeights[i];
                 feasibility += itemWeights[i];
                 objectiveFunction += itemValues[i];
-                selection[i] = 1;
+                binaryArray[i] = 1;
             }
         }
 
-        System.out.println("Greedy-density: total value = " + objectiveFunction);
-        System.out.println("Feasibility = " + feasibility);
-        System.out.println("Selection vector: " + Arrays.toString(selection));
+        System.out.println("Greedy-density: best objective function = " + objectiveFunction);
+        System.out.println("Feasibility: " + feasibility + " <= " + capacity);
 
-        System.out.print("Selected item weights: ");
-        for (int i = 0; i < n; i++) {
-            if (selection[i] == 1) System.out.print(itemWeights[i] + " ");
-        }
-        System.out.print("\nSelected item values:  ");
-        for (int i = 0; i < n; i++) {
-            if (selection[i] == 1) System.out.print(itemValues[i] + " ");
-        }
-        System.out.println();
-
-        return new int[][]{selection};
+        printItems(n, binaryArray);
     }
 }
