@@ -1,7 +1,9 @@
 package org.example.BruteForce;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class Knapsack {
     private final int[] itemWeights;
@@ -59,7 +61,8 @@ public class Knapsack {
         int totalSubsets = 1 << n;
         int bestObjectiveFunction = 0;
         int bestFeasibility = 0;
-        int[] bestSolution = new int[n];
+
+        List<int[]> solutions = new ArrayList<>();
 
         for (int mask = 0; mask < totalSubsets; mask++) {
             int feasibility = 0;
@@ -72,17 +75,24 @@ public class Knapsack {
                 }
             }
 
-            if (feasibility <= capacity && objectiveFunction > bestObjectiveFunction) {
-                bestObjectiveFunction = objectiveFunction;
-                bestFeasibility = feasibility;
-                bestSolution = toBinaryArray(mask, n);
+            if (feasibility <= capacity) {
+                if (objectiveFunction > bestObjectiveFunction) {
+                    bestObjectiveFunction = objectiveFunction;
+                    bestFeasibility = feasibility;
+                    solutions.clear();
+                    solutions.add(toBinaryArray(mask, n));
+                } else if (objectiveFunction == bestObjectiveFunction) {
+                    solutions.add(toBinaryArray(mask, n));
+                }
             }
         }
 
         System.out.println("Brute‐force: best objective function = " + bestObjectiveFunction);
         System.out.println("Feasibility: " + bestFeasibility + " <= " + capacity);
 
-        printItems(n, bestSolution);
+        for (int[] vec : solutions) {
+            printItems(n, vec);
+        }
     }
 
     private void printItems(int n, int[] vec) {

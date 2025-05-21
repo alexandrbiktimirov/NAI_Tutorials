@@ -4,9 +4,9 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        int capacity = 10;
-        int[] weight = {8, 10 ,3, 5, 2};
-        int[] values = {10, 12, 5, 6, 2};
+        int capacity = 11;
+        int[] weight = {8, 7, 8, 3, 9, 9, 11, 9, 2, 5, 3, 3, 2, 4, 10, 2, 11, 10, 9, 8, 4, 11, 6, 10, 7, 7, 10, 3};
+        int[] values = {49, 82, 66, 9, 28, 45, 95, 36, 37, 75, 70, 54, 31, 38, 72, 18, 2, 2, 65, 64, 7, 21, 26, 94, 21, 46, 32, 33};
 
         boolean running = true;
 
