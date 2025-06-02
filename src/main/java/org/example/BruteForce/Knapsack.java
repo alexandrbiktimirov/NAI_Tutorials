@@ -1,9 +1,6 @@
 package org.example.BruteForce;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Knapsack {
     private final int[] itemWeights;
@@ -21,8 +18,22 @@ public class Knapsack {
 
         if (type.equalsIgnoreCase("brute force")) {
             bruteForce();
-        } else {
+        } else if (type.equalsIgnoreCase("greedy density based approach")) {
             greedyDensityApproach();
+        } else{
+            while (true) {
+                System.out.println("Enter the number of restarts");
+                Scanner scanner = new Scanner(System.in);
+
+                try{
+                    int restarts = scanner.nextInt();
+                    hillClimbing(restarts);
+
+                    break;
+                } catch(NumberFormatException e){
+                    System.out.println("Enter an integer");
+                }
+            }
         }
 
         long endTime = System.nanoTime();
@@ -148,5 +159,106 @@ public class Knapsack {
         System.out.println("Feasibility: " + feasibility + " <= " + capacity);
 
         printItems(n, binaryArray);
+    }
+
+    public void hillClimbing(int numberOfRestarts) {
+        int n = itemValues.length;
+        Random rand = new Random();
+
+        List<int[]> solutions = new ArrayList<>();
+
+        int bestObjectiveFunction = 0;
+        int bestFeasibility = 0;
+
+        for (int restart = 1; restart <= numberOfRestarts; restart++) {
+            int[] currentSolution = new int[n];
+            int currentWeight = 0;
+            int currentValue = 0;
+
+            for (int i = 0; i < n; i++) {
+                currentSolution[i] = rand.nextBoolean() ? 1 : 0;
+
+                if (currentSolution[i] == 1) {
+                    currentWeight += itemWeights[i];
+                    currentValue += itemValues[i];
+                }
+            }
+
+            while (currentWeight > capacity) {
+                int i = rand.nextInt(n);
+
+                if (currentSolution[i] == 1) {
+                    currentSolution[i] = 0;
+                    currentWeight -= itemWeights[i];
+                    currentValue -= itemValues[i];
+                }
+            }
+
+            boolean improvement = true;
+
+            while (improvement) {
+                improvement = false;
+
+                int bestNeighborValue = currentValue;
+                int bestNeighborWeight = currentWeight;
+                int[] bestNeighbor = Arrays.copyOf(currentSolution, n);
+
+                for (int i = 0; i < n; i++) {
+                    int flippedWeight = currentWeight;
+                    int flippedValue = currentValue;
+
+                    if (currentSolution[i] == 1) {
+                        flippedWeight -= itemWeights[i];
+                        flippedValue -= itemValues[i];
+                    } else {
+                        flippedWeight += itemWeights[i];
+                        flippedValue += itemValues[i];
+                    }
+
+                    if (flippedWeight <= capacity) {
+                        if (flippedValue > bestNeighborValue) {
+                            bestNeighborValue = flippedValue;
+                            bestNeighborWeight = flippedWeight;
+                            bestNeighbor = Arrays.copyOf(currentSolution, n);
+                            bestNeighbor[i] = 1 - bestNeighbor[i];
+                        }
+                    }
+                }
+
+                if (bestNeighborValue > currentValue) {
+                    currentSolution = bestNeighbor;
+                    currentValue = bestNeighborValue;
+                    currentWeight = bestNeighborWeight;
+                    improvement = true;
+                }
+            }
+
+            if (currentValue > bestObjectiveFunction) {
+                bestObjectiveFunction = currentValue;
+                bestFeasibility = currentWeight;
+                solutions.clear();
+                solutions.add(Arrays.copyOf(currentSolution, n));
+            } else if (currentValue == bestObjectiveFunction) {
+                boolean duplicate = false;
+
+                for (int[] sol : solutions) {
+                    if (Arrays.equals(sol, currentSolution)) {
+                        duplicate = true;
+                        break;
+                    }
+                }
+
+                if (!duplicate) {
+                    solutions.add(Arrays.copyOf(currentSolution, n));
+                }
+            }
+        }
+
+        System.out.println("Hill-Climbing: best objective function = " + bestObjectiveFunction);
+        System.out.println("Feasibility: " + bestFeasibility + " <= " + capacity);
+
+        for (int[] sol : solutions) {
+            printItems(n, sol);
+        }
     }
 }

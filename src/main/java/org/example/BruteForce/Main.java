@@ -15,6 +15,7 @@ public class Main {
             System.out.println("1. Brute Force method");
             System.out.println("2. Greedy density method");
             System.out.println("3. Both methods");
+            System.out.println("4. Hill climbing method");
             Scanner input = new Scanner(System.in);
             String option = input.nextLine();
 
@@ -36,6 +37,7 @@ public class Main {
                 case 1 -> knapsack = new Knapsack(weight, values, capacity, "Brute Force");
                 case 2 -> knapsack = new Knapsack(weight, values, capacity, "Greedy Density Based Approach");
                 case 3 -> knapsack = new Knapsack(weight, values, capacity);
+                case 4 -> knapsack = new Knapsack(weight, values, capacity, "Hill Climbing Approach");
                 default -> System.out.println("Incorrect input, please try again");
             }
         }
