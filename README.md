@@ -9,7 +9,7 @@ Each task is located under its own package inside the src/main/java/org/example/
 - `SingleLayerNeuralNetwork` - package for Single-Layer Neural Network mini-programming project.
 - `KMeans` - package for K-Means clustering mini-programming project.
 - `Bayes` - package for Naive Bayes classifier mini-programming project.
-- `BruteForce` - package for Brute Force mimi-programming project.
+- `BruteForce` - package for Brute Force mini-programming project.
 
 ## 🔍 Mini-programming projects covered
 **Mini-programming project 1: KNN (K-Nearest Neighbors)**
